@@ -36,56 +36,42 @@ void printList(struct node* head)
     printf("\n");
 }
 
+struct node* circular(struct node* head){
+    struct node* start = head;
+    while(start->next != NULL){
+        start = start->next;
+    }
+    start->next = head;
+    return start;
+}
+
+struct node* noncircular(struct node* head){
+    struct node* start = head;
+    while(start->next != head){
+        start = start->next;
+    }
+    start->next = NULL;
+    return start;
+}
+
 void deleteNode(struct node* head,int key){
 
     struct node *current = head, *prev;
-
-    // list is empty
+    noncircular(current);
     if(current == NULL){
-        printf("\nUnderFlow Condition!");
+        circular(current);
         return;
     }
-
-    // find the required node
-  
-    while(current->data != key){
-        if(current->next == head){
-            printf("Given data is not found in the list");
-            break;
-        }
-        prev = current;
-        current = current->next;
-    }
-
-
-    // list contains single element
-    if(current->next == NULL){
-        head = NULL;
-        free(current);
+    if(current->next->data == key){
+        struct node* temp = current->next;
+        current->next = current->next->next;
+        free(temp);   
+        circular(current);
         return;
     }
-
-    // if first node
-    if(current == head){
-        prev = head;
-        while(prev->next != head){
-            prev = prev->next;
-        }
-
-        head = current->next;
-        prev->next = head;
-        free(current);
-    }
+    circular(current);
+    deleteNode(head->next,key);
     
-    else if(current->next == head && current == head){
-        prev->next = head;
-        free(current);
-    }
-
-    else{
-        prev->next = current->next;
-        free(current);
-    }
 }
 
 int main(){
